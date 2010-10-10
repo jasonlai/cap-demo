@@ -34,7 +34,7 @@ namespace :deploy do
 
   after :'deploy:update_code', :'deploy:config'
   desc <<-DESC
-  Generates
+  Generates database configurations on the fly.
   DESC
   task :config do
     configuration = {}

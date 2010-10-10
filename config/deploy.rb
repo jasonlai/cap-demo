@@ -31,4 +31,24 @@ namespace :deploy do
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
   end
+
+  after :'deploy:update_code', :'deploy:config'
+  desc <<-DESC
+  Generates
+  DESC
+  task :config do
+    configuration = {}
+    configuration.update('production' => {
+      'adapter'     =>  'mysql2',
+      'encoding'    =>  'utf8',
+      'reconnect'   =>  false,
+      'database'    =>  'cap-demo_production',
+      'pool'        =>  5,
+      'username'    =>  'root',
+      'password'    =>  '',
+      'socket'      =>  '/var/run/mysqld/mysqld.sock',
+    })
+    require 'yaml'
+    put configuration.to_yaml, File.join(latest_release, 'config', 'database.yml')
+  end
 end
